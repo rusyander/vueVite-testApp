@@ -63,6 +63,7 @@ export default {
       this.posts.shift(post);
       await axios.post("http://localhost:5000/posts", post);
       this.dialogWisable = false;
+      this.fetchUsers();
     },
     async deletePost(id) {
       this.posts = this.posts.filter((post) => post.id != id);
