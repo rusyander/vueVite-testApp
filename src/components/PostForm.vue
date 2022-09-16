@@ -4,7 +4,7 @@
       <div v-if="updateTXT == false">
         <MyInput type="text" placeholder="fio" v-model="post.fio" />
         <MyInput type="text" placeholder="email" v-model="post.email" />
-        <MyInput type="text" placeholder="phone" v-model="post.phone" />
+        <MyInput type="tel" placeholder="phone" v-model="post.phone" />
 
         <MyButton type="submit" @click="addPosts">Add posts</MyButton>
       </div>
@@ -13,7 +13,7 @@
       <div v-if="updateTXT == true">
         <MyInput type="text" placeholder="fio" v-model="post.fio" />
         <MyInput type="text" placeholder="email" v-model="post.email" />
-        <MyInput type="text" placeholder="phone" v-model="post.phone" />
+        <MyInput type="tel" placeholder="phone" v-model="post.phone" />
 
         <MyButton type="submit" @click="updatePost">Update post</MyButton>
       </div>
@@ -23,57 +23,64 @@
 
 <script>
 import axios from "axios";
+import { ref, inject } from "vue";
+
 export default {
   name: "PostForm",
   props: {
     updateTXT: Boolean,
     postForUpdate: String,
   },
-  inject: ["fetchUsers"],
-  data() {
-    return {
-      post: {
-        fio: "",
-        email: "",
-        phone: "",
-        id: Date.now().toString(),
-      },
-    };
-  },
-  methods: {
-    addPosts() {
+  // inject: ["fetchUsers"],
+
+  emits: ["addPosts", "updatePost"],
+  setup(props, { emit }) {
+    const ngrokUrl = inject("ngrokUrl");
+    const fetchUsers = inject("fetchUsers");
+    const post = ref({
+      fio: "",
+      email: "",
+      phone: "",
+      id: Date.now().toString(),
+    });
+    const addPosts = () => {
       if (
-        this.post.fio.trim() &&
-        this.post.email.trim() &&
-        this.post.phone.trim()
+        post.value.fio.trim() &&
+        post.value.email.trim() &&
+        post.value.phone.trim()
       ) {
         const newPost = {
-          fio: this.post.fio,
-          phone: this.post.phone,
-          email: this.post.email,
+          fio: post.value.fio,
+          phone: post.value.phone,
+          email: post.value.email,
           id: Date.now().toString(),
         };
-        this.$emit("create", newPost);
-        this.post.fio = this.post.phone = this.post.email = "";
+        emit("create", newPost);
+        post.value.fio = post.value.phone = post.value.email = "";
       }
-    },
+    };
 
-    async updatePost() {
-      const updatePosts = {
-        fio: this.post.fio,
-        phone: this.post.phone,
-        email: this.post.email,
+    const updatePost = async () => {
+      const newPost = {
+        fio: post.value.fio,
+        phone: post.value.phone,
+        email: post.value.email,
         id: Date.now().toString(),
       };
-
       const response = await axios.put(
-        `http://localhost:5000/posts/${this.postForUpdate.id}`,
-        updatePosts
+        `${ngrokUrl}/${props.postForUpdate.id}`,
+        newPost
       );
       if (response.status == 200) {
-        this.fetchUsers();
+        fetchUsers();
       }
-    },
+    };
+    return {
+      post,
+      addPosts,
+      updatePost,
+      fetchUsers,
+    };
   },
 };
 </script>

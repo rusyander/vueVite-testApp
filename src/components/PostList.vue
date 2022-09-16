@@ -26,7 +26,7 @@
 <script>
 import PostItem from "./PostItem.vue";
 import PostForm from "./PostForm.vue";
-import axios from "axios";
+import { ref } from "vue";
 export default {
   components: {
     PostItem,
@@ -37,26 +37,30 @@ export default {
     posts: Array,
     updateText: Boolean,
   },
-  data() {
-    return {
-      dialogWisable: false,
-      updateTXT: true,
-      postForUpdate: [],
-    };
-  },
-  methods: {
-    deletePost(id) {
-      this.$emit("delete", id);
-    },
 
-    async updatePost(post) {
-      this.dialogWisable = true;
-      this.postForUpdate = post;
-      console.log(this.postForUpdate);
-    },
-    dialog() {
-      this.dialogWisable = true;
-    },
+  emits: ["deletePost"],
+  setup(props, { emit }) {
+    const dialogWisable = ref(false);
+    const updateTXT = ref(true);
+    const postForUpdate = ref([]);
+    const updatePost = (post) => {
+      dialogWisable.value = true;
+      postForUpdate.value = post;
+    };
+    const deletePost = (id) => {
+      emit("delete", id);
+    };
+    const dialog = () => {
+      dialogWisable.value = true;
+    };
+    return {
+      dialogWisable,
+      updateTXT,
+      postForUpdate,
+      deletePost,
+      updatePost,
+      dialog,
+    };
   },
 };
 </script>

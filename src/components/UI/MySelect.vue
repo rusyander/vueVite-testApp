@@ -20,10 +20,14 @@ export default {
     modelValue: String,
     options: Array,
   },
-  methods: {
-    changeOptions(e) {
-      this.$emit("update:modelValue", e.target.value);
-    },
+  emits: ["changeOptions"],
+  setup(props, { emit }) {
+    const changeOptions = (e) => {
+      emit("update:modelValue", e.target.value);
+    };
+    return {
+      changeOptions,
+    };
   },
 };
 </script>

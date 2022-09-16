@@ -15,10 +15,14 @@ export default {
       default: false,
     },
   },
-  methods: {
-    hideDialog() {
-      this.$emit("update:show", false);
-    },
+  emits: ["hideDialog"],
+  setup(props, { emit }) {
+    const hideDialog = () => {
+      emit("update:show", false);
+    };
+    return {
+      hideDialog,
+    };
   },
 };
 </script>

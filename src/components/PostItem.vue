@@ -21,18 +21,24 @@
 </template>
 
 <script>
+import { ref } from "vue";
 export default {
   name: "PostItem",
   props: {
     post: Object,
   },
-  methods: {
-    deletePost(id) {
-      this.$emit("delete", id);
-    },
-    update(post) {
-      this.$emit("update", post);
-    },
+  emits: ["deletePost", "update"],
+  setup(props, { emit }) {
+    const deletePost = (id) => {
+      emit("delete", id);
+    };
+    const update = (post) => {
+      emit("update", post);
+    };
+    return {
+      deletePost,
+      update,
+    };
   },
 };
 </script>
