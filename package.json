@@ -5,7 +5,7 @@
   "scripts": {
     "start": "concurrently \"npm run dev\" \"npm run serve\" ",
     "dev": "vite --host",
-    "build": "vue-tsc --noEmit && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "serve": "json-server --watch db.json --port 5000",
     "ngrok": "ngrok http 5000"
