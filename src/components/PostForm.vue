@@ -1,11 +1,11 @@
 <template>
   <div>
-    <form action="submit" @submit.prevent @click="addPosts">
+    <form action="submit" @submit.prevent>
       <div v-if="updateTXT == false">
         <MyInput type="text" placeholder="fio" v-model="post.fio" />
         <MyInput type="text" placeholder="email" v-model="post.email" />
         <MyInput type="tel" placeholder="phone" v-model="post.phone" />
-
+        <h2 v-if="arrorM == true">Заполните все поля</h2>
         <MyButton type="submit" @click="addPosts">Add posts</MyButton>
       </div>
     </form>
@@ -14,6 +14,7 @@
         <MyInput type="text" placeholder="fio" v-model="post.fio" />
         <MyInput type="text" placeholder="email" v-model="post.email" />
         <MyInput type="tel" placeholder="phone" v-model="post.phone" />
+        <h2 v-if="arrorM == true">Заполните все поля</h2>
 
         <MyButton type="submit" @click="updatePost">Update post</MyButton>
       </div>
@@ -37,6 +38,7 @@ export default {
   setup(props, { emit }) {
     const ngrokUrl = inject("ngrokUrl");
     const fetchUsers = inject("fetchUsers");
+    const arrorM = ref(false);
     const post = ref({
       fio: "",
       email: "",
@@ -44,11 +46,20 @@ export default {
       id: Date.now().toString(),
     });
     const addPosts = () => {
+      console.log("sdsdsd");
+      if (
+        post.value.fio == "" ||
+        post.value.email == "" ||
+        post.value.phone == ""
+      ) {
+        arrorM.value = true;
+      }
       if (
         post.value.fio.trim() &&
         post.value.email.trim() &&
         post.value.phone.trim()
       ) {
+        arrorM.value = false;
         const newPost = {
           fio: post.value.fio,
           phone: post.value.phone,
@@ -61,12 +72,20 @@ export default {
     };
 
     const updatePost = async () => {
+      if (
+        post.value.fio == "" ||
+        post.value.email == "" ||
+        post.value.phone == ""
+      ) {
+        arrorM.value = true;
+      }
       const newPost = {
         fio: post.value.fio,
         phone: post.value.phone,
         email: post.value.email,
         id: Date.now().toString(),
       };
+      arrorM.value = false;
       const response = await axios.put(
         `${ngrokUrl}/${props.postForUpdate.id}`,
         newPost
@@ -80,6 +99,7 @@ export default {
       addPosts,
       updatePost,
       fetchUsers,
+      arrorM,
     };
   },
 };
